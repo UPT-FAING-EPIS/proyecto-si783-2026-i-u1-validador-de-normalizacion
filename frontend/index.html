@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataQuest - Validador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="max-w-4xl mx-auto py-6 px-4">
+        <h1 class="text-2xl font-bold text-indigo-600 mb-4">DataQuest - Validador de Normalización</h1>
+        
+        <div id="resultado" class="hidden bg-white rounded-lg shadow p-4 mb-4">
+            <h2 class="font-bold">Resultado:</h2>
+            <p>Nivel: <span id="nivel">---</span></p>
+            <div id="violaciones-box" class="hidden">
+                <p>Violaciones:</p>
+                <ul id="violaciones" class="text-red-600"></ul>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-4">
+            <h2 class="font-bold mb-2">Validar Esquema</h2>
+            
+            <div class="mb-2">
+                <label>Atributos (coma separados):</label>
+                <input type="text" id="atributos" class="w-full border p-2" value="A, B, C">
+            </div>
+            
+            <div class="mb-2">
+                <label>Dependencias (A→B, A→C):</label>
+                <div id="deps">
+                    <input type="text" class="det w-20 border p-1" value="A"> → 
+                    <input type="text" class="dep w-20 border p-1" value="B"><br><br>
+                    <input type="text" class="det w-20 border p-1" value="A"> → 
+                    <input type="text" class="dep w-20 border p-1" value="C">
+                </div>
+            </div>
+            
+            <button onclick="validar()" class="bg-indigo-600 text-white px-4 py-2 rounded">Validar</button>
+            <span id="status" class="ml-2 hidden">Validando...</span>
+        </div>
+    </div>
+
+    <script>
+        async function validar() {
+            const atributos = document.getElementById('atributos').value.split(',').map(s => s.trim()).filter(s => s);
+            const detInputs = document.querySelectorAll('.det');
+            const depInputs = document.querySelectorAll('.dep');
+            
+            const dependencias = [];
+            for (let i = 0; i < detInputs.length; i++) {
+                if (detInputs[i].value && depInputs[i].value) {
+                    dependencias.push({
+                        determinante: detInputs[i].value.trim(),
+                        dependiente: depInputs[i].value.trim()
+                    });
+                }
+            }
+
+            document.getElementById('status').classList.remove('hidden');
+
+            try {
+                const res = await fetch('/DATAQUEST/api_validate.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({atributos, dependencias})
+                });
+                const data = await res.json();
+                mostrar(data);
+            } catch (e) {
+                alert('Error: ' + e);
+            }
+            
+            document.getElementById('status').classList.add('hidden');
+        }
+
+        function mostrar(data) {
+            document.getElementById('resultado').classList.remove('hidden');
+            document.getElementById('nivel').textContent = data.nivel || 'error';
+            
+            const vb = document.getElementById('violaciones-box');
+            const vlist = document.getElementById('violaciones');
+            
+            if (data.violaciones && data.violaciones.length > 0) {
+                vb.classList.remove('hidden');
+                vlist.innerHTML = data.violaciones.map(v => '<li>'+v+'</li>').join('');
+            } else {
+                vb.classList.add('hidden');
+            }
+        }
+
+        window.onload = validar;
+    </script>
+</body>
+</html>

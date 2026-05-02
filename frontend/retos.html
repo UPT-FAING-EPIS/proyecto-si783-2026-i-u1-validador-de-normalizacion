@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>DataQuest - Retos Semanales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="max-w-4xl mx-auto py-6 px-4">
+        <h1 class="text-2xl font-bold text-indigo-600 mb-4">Retos Semanales</h1>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="font-bold text-lg">Reto de la Semana</h2>
+            <p class="text-green-600 font-semibold">Activo hasta: 8 de Mayo, 2026</p>
+            
+            <div class="mt-4">
+                <p class="font-semibold">Enunciado:</p>
+                <p>Diseña un esquema para una biblioteca universitaria con las siguientes entidades: Libro, Autor, Editorial, Préstamo, Usuario.</p>
+                
+                <p class="mt-2 font-semibold">Tablas iniciales:</p>
+                <ul class="list-disc list-inside">
+                    <li>Libro(ISBN, Título, Año, AutorID, EditorialID)</li>
+                    <li>Autor(Nombre, Nacionalidad)</li>
+                    <li>Editorial(Nombre, País)</li>
+                    <li>Préstamo(LibroID, UsuarioID, FechaPrestamo, FechaDevolucion)</li>
+                </ul>
+            </div>
+            
+            <button class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded">Participar</button>
+        </div>
+        
+        <div class="mt-6 bg-white rounded-lg shadow p-6">
+            <h3 class="font-bold">Ranking</h3>
+            <table class="w-full mt-2">
+                <tr class="bg-gray-100">
+                    <th class="text-left p-2">#</th>
+                    <th class="text-left p-2">Usuario</th>
+                    <th class="text-left p-2">Puntaje</th>
+                </tr>
+                <tr><td class="p-2">1</td><td class="p-2">ana_g</td><td class="p-2">95</td></tr>
+                <tr><td class="p-2">2</td><td class="p-2">luis_p</td><td class="p-2">87</td></tr>
+                <tr><td class="p-2">3</td><td class="p-2">maria_r</td><td class="p-2">82</td></tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
