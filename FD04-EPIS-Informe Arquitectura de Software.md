@@ -1,4 +1,4 @@
-[FD04-EPIS-Informe Arquitectura de Software.md](https://github.com/user-attachments/files/27297846/FD04-EPIS-Informe.Arquitectura.de.Software.md)
+[FD04-EPIS-Informe Arquitectura de Software.md](https://github.com/user-attachments/files/27297914/FD04-EPIS-Informe.Arquitectura.de.Software.md)
 **![C:\\Users\\EPIS\\Documents\\upt.png][image1]**
 
 **UNIVERSIDAD PRIVADA DE TACNA**
