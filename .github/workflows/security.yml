@@ -15,9 +15,7 @@ jobs:
       
       - name: Semgrep Analysis
         uses: returntocorp/semgrep-action@v1
-        env:
-          # Si decides usar la plataforma web de Semgrep, descomenta la siguiente línea
-          # SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+        # Si decides usar la plataforma web de Semgrep, agrega un bloque env: con SEMGREP_APP_TOKEN
         with:
           config: "p/default"
           
