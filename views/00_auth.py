@@ -1,0 +1,163 @@
+import streamlit as st
+from controllers.auth_controller import handle_login, handle_register, init_session, mostrar_logout_sidebar
+from visualizacion.estilos import aplicar_estilos
+
+aplicar_estilos()
+init_session()
+
+# Custom CSS for Auth Page to match AnzenCore style
+st.markdown("""
+<style>
+/* Center the main container */
+[data-testid="block-container"] {
+    max-width: 600px;
+    padding-top: 4rem;
+}
+
+/* Auth Header Card */
+.auth-header {
+    background: #141c2c;
+    border-radius: 20px;
+    padding: 40px 20px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    margin-bottom: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.auth-header img {
+    width: 64px;
+    margin-bottom: 15px;
+}
+
+.auth-header h1 {
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    background: linear-gradient(to right, #2dd4bf, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-shadow: none;
+}
+
+.auth-header p {
+    color: #64748b;
+    font-size: 0.95rem;
+    margin-top: 5px;
+}
+
+/* Custom Tabs Styling */
+[data-baseweb="tab-list"] {
+    gap: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 20px;
+    background: transparent;
+}
+
+[data-baseweb="tab"] {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 12px 20px !important;
+    color: #64748b !important;
+    font-weight: 500 !important;
+    font-size: 0.95rem !important;
+}
+
+[data-baseweb="tab"][aria-selected="true"] {
+    color: #2dd4bf !important;
+    border-bottom: 2px solid #2dd4bf !important;
+}
+
+/* Transparent Inputs */
+.stTextInput > div > div > input {
+    background-color: #141c2c !important;
+    border: 1px solid #1e293b !important;
+    border-radius: 8px !important;
+    color: #f8fafc !important;
+}
+
+.stTextInput > div > div > input:focus {
+    border-color: #2dd4bf !important;
+    box-shadow: 0 0 0 1px #2dd4bf !important;
+}
+
+/* Outline Button */
+[data-testid="stFormSubmitButton"] > button {
+    background: transparent !important;
+    border: 1px solid #2dd4bf !important;
+    color: #2dd4bf !important;
+    box-shadow: none !important;
+    border-radius: 8px !important;
+}
+
+[data-testid="stFormSubmitButton"] > button:hover {
+    background: rgba(45, 212, 191, 0.1) !important;
+    box-shadow: 0 0 15px rgba(45, 212, 191, 0.2) !important;
+    border: 1px solid #2dd4bf !important;
+}
+
+[data-testid="stFormSubmitButton"] > button::before {
+    display: none;
+}
+
+/* Hide Streamlit Sidebar in Auth if desired */
+[data-testid="stSidebar"] {
+    display: none;
+}
+</style>
+
+<div class="auth-header">
+    <img src="https://img.icons8.com/color/96/000000/shield.png" alt="Logo">
+    <h1>DataQuest</h1>
+    <p>Plataforma de normalización de datos</p>
+</div>
+""", unsafe_allow_html=True)
+
+
+if st.session_state.user:
+    st.success(f"Sesión activa como: {st.session_state.profile.get('nombre', 'Usuario')}")
+    if st.button("Cerrar Sesión"):
+        from controllers.auth_controller import handle_logout
+        handle_logout()
+        st.rerun()
+else:
+    tab1, tab2 = st.tabs(["🔑 Iniciar sesión", "✨ Crear cuenta"])
+    
+    with tab1:
+        with st.form("login_form", clear_on_submit=False):
+            st.caption("Usuario")
+            username = st.text_input("Tu usuario", label_visibility="collapsed", placeholder="Tu usuario")
+            st.caption("Contraseña")
+            password = st.text_input("Tu contraseña", label_visibility="collapsed", type="password", placeholder="••••••••")
+            submit_login = st.form_submit_button("Iniciar sesión")
+
+            if submit_login:
+                if not username or not password:
+                    st.error("Por favor, ingresa credenciales.")
+                else:
+                    with st.spinner("Verificando..."):
+                        exito, mensaje = handle_login(username, password)
+                        if exito:
+                            st.rerun()
+                        else:
+                            st.error(mensaje)
+                            
+    with tab2:
+        with st.form("register_form", clear_on_submit=False):
+            st.caption("Usuario")
+            username_reg = st.text_input("Nuevo usuario", label_visibility="collapsed", placeholder="Elige un usuario")
+            st.caption("Contraseña")
+            password_reg = st.text_input("Nueva contraseña", label_visibility="collapsed", type="password", placeholder="••••••••")
+            submit_reg = st.form_submit_button("Crear cuenta")
+
+            if submit_reg:
+                if not username_reg or not password_reg:
+                    st.error("Todos los campos son obligatorios.")
+                else:
+                    with st.spinner("Creando cuenta..."):
+                        exito, mensaje = handle_register(username_reg, password_reg)
+                        if exito:
+                            st.success(mensaje + " ¡Ahora puedes iniciar sesión!")
+                        else:
+                            st.error(mensaje)

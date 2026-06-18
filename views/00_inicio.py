@@ -1,0 +1,75 @@
+import streamlit as st
+import pandas as pd
+from controllers.auth_controller import init_session
+from controllers.dashboard_controller import get_dashboard_metrics, get_ultimos_escaneos
+from visualizacion.estilos import aplicar_estilos
+
+aplicar_estilos()
+init_session()
+
+if not st.session_state.user:
+    st.warning("Debes iniciar sesión para ver el dashboard.")
+    st.stop()
+
+user_name = st.session_state.profile.get("nombre", "Usuario")
+user_id = st.session_state.user.id
+
+# Breadcrumb
+st.markdown('<p style="color: #64748b; font-size: 0.85rem;">🛡️ DataQuest > <span style="color: #06b6d4;">Inicio</span></p>', unsafe_allow_html=True)
+
+# Título y Subtítulo
+st.markdown(f'<h1>Bienvenido, {user_name} 🚀</h1>', unsafe_allow_html=True)
+st.markdown('<p>Resumen de actividad de normalización y seguridad de base de datos.</p>', unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# Métricas (KPIs)
+metrics = get_dashboard_metrics(user_id)
+
+col1, col2, col3, col4 = st.columns(4)
+with col1:
+    st.metric("Validaciones realizadas", metrics["validaciones"])
+with col2:
+    st.metric("Tablas analizadas", metrics["tablas_analizadas"])
+with col3:
+    st.metric("Reportes / Hallazgos", metrics["reportes_generados"])
+with col4:
+    st.metric("Online ahora", metrics["online"])
+
+st.markdown("<br><br>", unsafe_allow_html=True)
+
+# Últimos Escaneos
+st.markdown("<h3>Últimas validaciones</h3>", unsafe_allow_html=True)
+
+escaneos = get_ultimos_escaneos(user_id, limit=5)
+
+if not escaneos:
+    st.info("No tienes validaciones recientes. Ve a la herramienta de Validador para empezar.")
+else:
+    # Preparar datos para la tabla
+    tabla_datos = []
+    for escaneo in escaneos:
+        nombre = escaneo.get("nombre_esquema", "Esquema sin nombre")
+        estado = "completed" if escaneo.get("nivel_final") else "pending"
+        
+        # Determinar "Severidad" o Estado basado en si tiene nivel_objetivo alcanzado
+        nivel_ini = escaneo.get("nivel_inicial", "")
+        nivel_fin = escaneo.get("nivel_final", "")
+        if nivel_fin == "3fn":
+            severidad = "Bajo"
+        elif nivel_fin == "2fn":
+            severidad = "Medio"
+        else:
+            severidad = "Alto"
+            
+        fecha = escaneo.get("fecha", "")[:19].replace("T", " ")
+        
+        tabla_datos.append({
+            "Esquema / Base de Datos": nombre,
+            "Estado": estado,
+            "Severidad Restante": severidad,
+            "Fecha": fecha
+        })
+        
+    df = pd.DataFrame(tabla_datos)
+    st.dataframe(df, use_container_width=True, hide_index=True)

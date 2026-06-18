@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+    <div class="mermaid">
+erDiagram
+    unidades ||--o{ evaluaciones : "unidad_id"
+    estudiantes ||--o{ notas : "estudiante_id"
+    docentes ||--o{ tokens : "docente_id"
+    cursos ||--o{ unidades : "curso_id"
+    cursos {
+        type id
+        type codigo
+    }
+    docentes {
+        type id
+        type nombre
+    }
+    estudiantes {
+        type id
+        type nombre
+    }
+    evaluaciones {
+        type id
+        type unidad_id FK
+    }
+    notas {
+        type id
+        type estudiante_id FK
+    }
+    tokens {
+        type id
+        type docente_id FK
+    }
+    unidades {
+        type id
+        type curso_id FK
+    }
+    </div>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+</body>
+</html>
