@@ -72,9 +72,10 @@ jobs:
         working-directory: ./terraform
         run: |
           SUB_ID=$(az account show --query id -o tsv)
-          terraform import azurerm_resource_group.rg /subscriptions/$SUB_ID/resourceGroups/rg-dataquest-prod || true
-          terraform import azurerm_service_plan.asp /subscriptions/$SUB_ID/resourceGroups/rg-dataquest-prod/providers/Microsoft.Web/serverfarms/asp-dataquest-linux || true
-          terraform import azurerm_linux_web_app.app /subscriptions/$SUB_ID/resourceGroups/rg-dataquest-prod/providers/Microsoft.Web/sites/app-dataquest-web || true
+          VARS="-var=\"docker_image=${{ env.DOCKER_IMAGE }}\" -var=\"supabase_url=${{ secrets.SUPABASE_URL }}\" -var=\"supabase_key=${{ secrets.SUPABASE_KEY }}\" -var=\"database_url=${{ secrets.DATABASE_URL }}\""
+          terraform import $VARS azurerm_resource_group.rg /subscriptions/$SUB_ID/resourceGroups/rg-dataquest-prod || true
+          terraform import $VARS azurerm_service_plan.asp /subscriptions/$SUB_ID/resourceGroups/rg-dataquest-prod/providers/Microsoft.Web/serverfarms/asp-dataquest-linux || true
+          terraform import $VARS azurerm_linux_web_app.app /subscriptions/$SUB_ID/resourceGroups/rg-dataquest-prod/providers/Microsoft.Web/sites/app-dataquest-web || true
 
       - name: Terraform Apply
         working-directory: ./terraform
