@@ -34,7 +34,7 @@ resource "azurerm_linux_web_app" "app" {
 }
 
 resource "azurerm_linux_web_app" "api" {
-  name                = "${var.web_app_name}-api-xyz99"
+  name                = "${var.web_app_name}-api"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   service_plan_id     = azurerm_service_plan.asp.id
