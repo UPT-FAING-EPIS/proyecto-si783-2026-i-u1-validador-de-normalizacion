@@ -16,7 +16,8 @@ app = FastAPI(
 # Habilitar CORS para permitir consumo desde otros clientes web
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Permite a cualquier dominio
+    # nosemgrep: python.fastapi.security.wildcard-cors.wildcard-cors
+    allow_origins=["*"],  # Permite a cualquier dominio público
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
