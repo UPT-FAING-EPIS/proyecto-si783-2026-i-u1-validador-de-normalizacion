@@ -5,7 +5,7 @@ on:
     workflows: ["Tests Suite", "Security Analysis"]
     types:
       - completed
-    branches: [ "main" ]
+    branches: [ "main", "Fabrizio-Perez" ]
 
 permissions:
   contents: write

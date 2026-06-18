@@ -2,7 +2,7 @@ name: Security Analysis
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "Fabrizio-Perez" ]
   pull_request:
     branches: [ "main" ]
 
