@@ -80,7 +80,7 @@ jobs:
           terraform import azurerm_resource_group.rg /subscriptions/$SUB_ID/resourceGroups/rg-dataquest-prod || true
           terraform import azurerm_service_plan.asp /subscriptions/$SUB_ID/resourceGroups/rg-dataquest-prod/providers/Microsoft.Web/serverFarms/asp-dataquest-linux || true
           terraform import azurerm_linux_web_app.app /subscriptions/$SUB_ID/resourceGroups/rg-dataquest-prod/providers/Microsoft.Web/sites/app-dataquest-web || true
-          terraform import azurerm_linux_web_app.api /subscriptions/$SUB_ID/resourceGroups/rg-dataquest-prod/providers/Microsoft.Web/sites/app-dataquest-web-api || true
+          terraform import azurerm_linux_web_app.api /subscriptions/$SUB_ID/resourceGroups/rg-dataquest-prod/providers/Microsoft.Web/sites/app-dataquest-web-api-xyz99 || true
       - name: Terraform Apply
         working-directory: ./terraform
         env:
