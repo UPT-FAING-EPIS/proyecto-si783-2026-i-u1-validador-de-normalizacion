@@ -27,5 +27,8 @@ resource "azurerm_linux_web_app" "app" {
 
   app_settings = {
     "WEBSITES_PORT" = "8501" # Puerto por defecto de Streamlit
+    "SUPABASE_URL"  = var.supabase_url
+    "SUPABASE_KEY"  = var.supabase_key
+    "DATABASE_URL"  = var.database_url
   }
 }

@@ -70,4 +70,4 @@ jobs:
         
       - name: Terraform Apply
         working-directory: ./terraform
-        run: terraform apply -auto-approve -var="docker_image=${{ env.DOCKER_IMAGE }}"
+        run: terraform apply -auto-approve -var="docker_image=${{ env.DOCKER_IMAGE }}" -var="supabase_url=${{ secrets.SUPABASE_URL }}" -var="supabase_key=${{ secrets.SUPABASE_KEY }}" -var="database_url=${{ secrets.DATABASE_URL }}"
