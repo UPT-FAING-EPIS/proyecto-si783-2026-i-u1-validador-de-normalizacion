@@ -89,3 +89,8 @@ jobs:
           TF_VAR_supabase_key: ${{ secrets.SUPABASE_KEY }}
           TF_VAR_database_url: ${{ secrets.DATABASE_URL }}
         run: terraform apply -auto-approve
+
+      - name: Restart Azure Web Apps
+        run: |
+          az webapp restart --name app-dataquest-web --resource-group rg-dataquest-prod
+          az webapp restart --name app-dataquest-web-api --resource-group rg-dataquest-prod
