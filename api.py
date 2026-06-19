@@ -23,6 +23,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+async def root():
+    return {
+        "status": "online",
+        "message": "DataQuest API está funcionando correctamente.",
+        "docs_url": "/docs"
+    }
+
 class RequestNormalizacion(BaseModel):
     sql: str = Field(..., description="Las sentencias CREATE TABLE que definen tu esquema relacional.")
 
