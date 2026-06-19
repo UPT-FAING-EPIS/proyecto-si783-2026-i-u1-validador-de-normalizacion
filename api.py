@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 import traceback
 
 # Importar lógica del validador existente
-from core.parser import parse_sql
+from core.parser import parse_schema
 from core.diagnostico import diagnosticar_esquema
 
 app = FastAPI(
@@ -48,7 +48,7 @@ async def normalizar_esquema(request: RequestNormalizacion):
             }
 
         # 1. Parsear el SQL usando la misma lógica que usa Streamlit
-        esquema_parseado = parse_sql(sql)
+        esquema_parseado = parse_schema(sql, formato="sql")
         
         if not esquema_parseado.get("tablas"):
              return {
