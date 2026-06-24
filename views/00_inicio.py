@@ -48,7 +48,12 @@ with col_chart1:
     st.markdown("**Niveles Iniciales (Tus Esquemas)**")
     df_inicial = charts_data.get("df_inicial")
     if df_inicial is not None and not df_inicial.empty:
-        st.bar_chart(df_inicial.set_index("Nivel"), color="#3b82f6")
+        import plotly.express as px
+        fig_ini = px.pie(df_inicial, values='Cantidad', names='Nivel', hole=0.4, 
+                         color_discrete_sequence=px.colors.sequential.Blues_r, template="plotly_dark")
+        fig_ini.update_traces(textposition='inside', textinfo='percent+label')
+        fig_ini.update_layout(margin=dict(t=20, b=20, l=20, r=20), showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+        st.plotly_chart(fig_ini, use_container_width=True)
     else:
         st.info("Aún no tienes datos suficientes para este gráfico.")
         
@@ -56,7 +61,12 @@ with col_chart2:
     st.markdown("**Niveles Finales Alcanzados**")
     df_final = charts_data.get("df_final")
     if df_final is not None and not df_final.empty:
-        st.bar_chart(df_final.set_index("Nivel"), color="#2dd4bf")
+        import plotly.express as px
+        fig_fin = px.pie(df_final, values='Cantidad', names='Nivel', hole=0.4, 
+                         color_discrete_sequence=px.colors.sequential.Teal_r, template="plotly_dark")
+        fig_fin.update_traces(textposition='inside', textinfo='percent+label')
+        fig_fin.update_layout(margin=dict(t=20, b=20, l=20, r=20), showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+        st.plotly_chart(fig_fin, use_container_width=True)
     else:
         st.info("Aún no tienes datos suficientes para este gráfico.")
 

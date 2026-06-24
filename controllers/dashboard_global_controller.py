@@ -1,43 +1,31 @@
-from db.conexion import get_db_connection
+from db.conexion import get_supabase_client
 import pandas as pd
 
 def get_global_metrics():
     """
-    Obtiene métricas globales de todas las validaciones saltando el RLS usando psycopg2.
+    Obtiene métricas globales de todas las validaciones usando supabase client.
     """
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
+        supabase = get_supabase_client()
         
         # Total validaciones
-        cursor.execute("SELECT COUNT(*) FROM historial_validaciones")
-        total_validaciones = cursor.fetchone()[0]
+        res_val = supabase.table("historial_validaciones").select("id", count="exact").execute()
+        total_validaciones = res_val.count if res_val.count else 0
         
-        # Distribución de Niveles Iniciales
-        cursor.execute("""
-            SELECT COALESCE(nivel_inicial, 'Desconocido'), COUNT(*) 
-            FROM historial_validaciones 
-            GROUP BY nivel_inicial
-        """)
-        niveles_iniciales = {row[0]: row[1] for row in cursor.fetchall()}
+        # Fetch all for metrics
+        res_all = supabase.table("historial_validaciones").select("user_id, nivel_inicial, nivel_final").execute()
+        datos = res_all.data
         
-        # Distribución de Niveles Finales
-        cursor.execute("""
-            SELECT COALESCE(nivel_final, 'Pendiente'), COUNT(*) 
-            FROM historial_validaciones 
-            GROUP BY nivel_final
-        """)
-        niveles_finales = {row[0]: row[1] for row in cursor.fetchall()}
+        usuarios_unicos = len(set([d["user_id"] for d in datos if d.get("user_id")]))
         
-        # Dificultad (promedio de violaciones por validación si es posible extraerlo, o conteo)
-        # We can extract the length of violaciones list if we query it, but it's JSONB.
-        # Let's keep it simple: Total de usuarios únicos que han usado la herramienta
-        cursor.execute("SELECT COUNT(DISTINCT user_id) FROM historial_validaciones")
-        usuarios_unicos = cursor.fetchone()[0]
-        
-        cursor.close()
-        conn.close()
-        
+        niveles_iniciales = {}
+        niveles_finales = {}
+        for d in datos:
+            ini = d.get("nivel_inicial") or "Desconocido"
+            fin = d.get("nivel_final") or "Pendiente"
+            niveles_iniciales[ini] = niveles_iniciales.get(ini, 0) + 1
+            niveles_finales[fin] = niveles_finales.get(fin, 0) + 1
+
         return {
             "total_validaciones": total_validaciones,
             "usuarios_unicos": usuarios_unicos,
