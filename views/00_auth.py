@@ -122,7 +122,7 @@ if st.session_state.user:
         handle_logout()
         st.rerun()
 else:
-    tab1, tab2 = st.tabs(["🔑 Iniciar sesión", "✨ Crear cuenta"])
+    tab1, tab2, tab3 = st.tabs(["🔑 Iniciar sesión", "✨ Crear cuenta", "🌍 Dashboard Global"])
     
     with tab1:
         with st.form("login_form", clear_on_submit=False):
@@ -161,3 +161,35 @@ else:
                             st.success(mensaje + " ¡Ahora puedes iniciar sesión!")
                         else:
                             st.error(mensaje)
+
+    with tab3:
+        st.subheader("Estadísticas Globales de Normalización")
+        st.markdown("Vista general de las bases de datos analizadas por el sistema.")
+        
+        from controllers.dashboard_global_controller import get_global_metrics, format_data_for_charts
+        metricas = get_global_metrics()
+        df_inicial, df_final = format_data_for_charts(metricas)
+        
+        col_m1, col_m2 = st.columns(2)
+        with col_m1:
+            st.metric("Total de Validaciones", metricas["total_validaciones"])
+        with col_m2:
+            st.metric("Usuarios Únicos", metricas["usuarios_unicos"])
+            
+        st.divider()
+        
+        col_g1, col_g2 = st.columns(2)
+        with col_g1:
+            st.markdown("**Niveles Iniciales Detectados**")
+            if not df_inicial.empty:
+                st.bar_chart(df_inicial.set_index("Nivel"), color="#3b82f6")
+            else:
+                st.info("Sin datos aún.")
+                
+        with col_g2:
+            st.markdown("**Niveles Finales Alcanzados**")
+            if not df_final.empty:
+                st.bar_chart(df_final.set_index("Nivel"), color="#2dd4bf")
+            else:
+                st.info("Sin datos aún.")
+

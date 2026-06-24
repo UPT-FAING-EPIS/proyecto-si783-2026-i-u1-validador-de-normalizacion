@@ -38,6 +38,30 @@ with col4:
 
 st.markdown("<br><br>", unsafe_allow_html=True)
 
+# Gráficos del usuario
+st.markdown("<h3>Tus Estadísticas de Normalización</h3>", unsafe_allow_html=True)
+from controllers.dashboard_controller import get_user_charts_data
+charts_data = get_user_charts_data(user_id)
+
+col_chart1, col_chart2 = st.columns(2)
+with col_chart1:
+    st.markdown("**Niveles Iniciales (Tus Esquemas)**")
+    df_inicial = charts_data.get("df_inicial")
+    if df_inicial is not None and not df_inicial.empty:
+        st.bar_chart(df_inicial.set_index("Nivel"), color="#3b82f6")
+    else:
+        st.info("Aún no tienes datos suficientes para este gráfico.")
+        
+with col_chart2:
+    st.markdown("**Niveles Finales Alcanzados**")
+    df_final = charts_data.get("df_final")
+    if df_final is not None and not df_final.empty:
+        st.bar_chart(df_final.set_index("Nivel"), color="#2dd4bf")
+    else:
+        st.info("Aún no tienes datos suficientes para este gráfico.")
+
+st.markdown("<br><br>", unsafe_allow_html=True)
+
 # Últimos Escaneos
 st.markdown("<h3>Últimas validaciones</h3>", unsafe_allow_html=True)
 

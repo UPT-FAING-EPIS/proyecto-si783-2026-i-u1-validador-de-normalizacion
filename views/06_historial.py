@@ -30,6 +30,29 @@ try:
                 st.markdown(f"**Nivel de Normalización:** Inicial: `{nivel_inicial}` ➔ Objetivo: `{nivel_objetivo}` ➔ Final: `{nivel_final}`")
                 st.markdown(f"**Formato de entrada:** `{h.get('formato_entrada', 'N/A')}`")
                 
+                try:
+                    from core.generador_pdf import generar_pdf_reporte
+                    pdf_bytes = generar_pdf_reporte(
+                        esquema_original=h.get('esquema_original'),
+                        nivel_inicial=nivel_inicial,
+                        nivel_objetivo=nivel_objetivo,
+                        nivel_final=nivel_final,
+                        violaciones=h.get('violaciones', {}),
+                        sugerencias=h.get('sugerencias', []),
+                        nombre_esquema=h.get('nombre_esquema', 'Desconocido')
+                    )
+                    st.download_button(
+                        label="📄 Descargar Reporte PDF",
+                        data=pdf_bytes,
+                        file_name=f"reporte_{h.get('nombre_esquema', 'esquema')}.pdf",
+                        mime="application/pdf",
+                        key=f"dl_pdf_{h['id']}"
+                    )
+                except Exception as e:
+                    st.error(f"Error generando PDF: {e}")
+                
+                st.divider()
+                
                 tab_sql, tab_mermaid, tab_viol, tab_sug = st.tabs(["📜 Consulta Original", "🧜‍♂️ Código Mermaid (Final)", "🚨 Errores", "💡 Soluciones"])
                 
                 with tab_sql:

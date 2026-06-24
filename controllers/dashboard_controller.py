@@ -55,3 +55,43 @@ def get_ultimos_escaneos(user_id, limit=5):
     except Exception as e:
         print(f"Error obteniendo últimos escaneos: {e}")
         return []
+
+def get_user_charts_data(user_id):
+    """
+    Obtiene métricas específicas del usuario para mostrar en gráficos en el dashboard personal.
+    """
+    try:
+        supabase = get_supabase_client()
+        res = supabase.table("historial_validaciones").select("fecha, nivel_inicial, nivel_final").eq("user_id", user_id).execute()
+        
+        datos = res.data
+        if not datos:
+            return {"fechas": [], "niveles_iniciales": {}, "niveles_finales": {}}
+            
+        niveles_iniciales = {}
+        niveles_finales = {}
+        
+        for fila in datos:
+            n_ini = fila.get("nivel_inicial") or "Desconocido"
+            n_fin = fila.get("nivel_final") or "Pendiente"
+            
+            niveles_iniciales[n_ini] = niveles_iniciales.get(n_ini, 0) + 1
+            niveles_finales[n_fin] = niveles_finales.get(n_fin, 0) + 1
+            
+        import pandas as pd
+        df_inicial = pd.DataFrame(list(niveles_iniciales.items()), columns=["Nivel", "Cantidad"])
+        df_final = pd.DataFrame(list(niveles_finales.items()), columns=["Nivel", "Cantidad"])
+        
+        if not df_inicial.empty:
+            df_inicial["Nivel"] = df_inicial["Nivel"].str.upper()
+        if not df_final.empty:
+            df_final["Nivel"] = df_final["Nivel"].str.upper()
+            
+        return {
+            "df_inicial": df_inicial,
+            "df_final": df_final
+        }
+    except Exception as e:
+        print(f"Error obteniendo datos para gráficos de usuario: {e}")
+        import pandas as pd
+        return {"df_inicial": pd.DataFrame(), "df_final": pd.DataFrame()}

@@ -118,7 +118,7 @@ with col1:
                 )
             st.success("¡Cambios aplicados y guardados en tu historial!")
             
-    col_dl1, col_dl2 = st.columns(2)
+    col_dl1, col_dl2, col_dl3 = st.columns(3)
     with col_dl1:
         st.download_button(
             label="Descargar Script (.sql)",
@@ -135,6 +135,27 @@ with col1:
             mime="text/plain",
             use_container_width=True
         )
+    with col_dl3:
+        try:
+            from core.generador_pdf import generar_pdf_reporte
+            pdf_bytes = generar_pdf_reporte(
+                esquema_original=st.session_state.schema_actual,
+                nivel_inicial=diagnostico.get('nivel_actual', 'Desconocido'),
+                nivel_objetivo=nivel_objetivo,
+                nivel_final=nivel_objetivo, # Aprox
+                violaciones=diagnostico,
+                sugerencias=st.session_state.mejoras_seleccionadas,
+                nombre_esquema="Esquema Validado"
+            )
+            st.download_button(
+                label="Descargar Reporte (.pdf)",
+                data=pdf_bytes,
+                file_name="reporte_normalizacion.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
+        except Exception as e:
+            st.error(f"Error PDF: {e}")
         
     with st.expander("Ver SQL Generado"):
         st.code(sql_nuevo, language="sql")
