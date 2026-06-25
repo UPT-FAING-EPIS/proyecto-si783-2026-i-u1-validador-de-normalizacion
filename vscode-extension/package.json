@@ -1,0 +1,35 @@
+{
+  "name": "validador-normalizacion-db",
+  "displayName": "Validador Normalización DB",
+  "description": "Extensión que valida la normalización (1FN, 2FN, 3FN) de un esquema de base de datos y provee sugerencias.",
+  "version": "1.0.0",
+  "publisher": "dataquest",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:validador-db.analizarEsquema"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "validador-db.analizarEsquema",
+        "title": "Validador DB: Analizar e Inyectar Reporte"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "^18.x",
+    "typescript": "^5.1.6"
+  }
+}
